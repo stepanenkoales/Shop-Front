@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import { routes } from '../config/routes';
 
 export const HomePage = () => {
     return (
@@ -8,10 +9,8 @@ export const HomePage = () => {
             <div>some information</div>  
             
             <div>
-                <p>please Login </p>
-                    <Link to='/login'>
-                        <p>to Login</p>
-                    </Link>
+                <p>please <Link to={routes.login}>Login</Link> </p>
+                   
             </div>
 
         </>
