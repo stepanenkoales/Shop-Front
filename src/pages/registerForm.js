@@ -1,8 +1,8 @@
-import { Form, Input, Button} from 'antd';
-import { Link, useNavigate } from 'react-router-dom';
-import { routes } from '../config/routes';
-import { httpsService } from '../utils/https.service';
-import '../styles/registerPage.scss';
+import { Form, Input, Button } from 'antd'
+import { Link } from 'react-router-dom'
+import { routes } from '../config/routes'
+import { httpsService } from '../utils/https.service'
+import '../styles/registerPage.scss'
 
 const formItemLayout = {
   labelCol: {
@@ -21,7 +21,7 @@ const formItemLayout = {
       span: 16,
     },
   },
-};
+}
 const tailFormItemLayout = {
   wrapperCol: {
     xs: {
@@ -33,78 +33,70 @@ const tailFormItemLayout = {
       offset: 8,
     },
   },
-};
+}
 
 export const RegisterForm = () => {
-  const [form] = Form.useForm();
-  const navigate = useNavigate();
-  
+  const [form] = Form.useForm()
 
   const handleRegister = async (body) => {
-      
-    //console.log(body);
-
-    try {
-        const response = await httpsService.post('/user', body);
-        console.log(response);
-    } catch (e) {
-        console.log('fatalerror')
-    }
-    
-
-    navigate(routes.homepage);
-  };
+    await httpsService.post('/user', body)
+  }
 
   return (
     <Form
       {...formItemLayout}
       form={form}
       name="register"
+      className="register-form"
       onFinish={handleRegister}
-      initialValues={{
-        residence: ['zhejiang', 'hangzhou', 'xihu'],
-        prefix: '86',
-      }}
-      scrollToFirstError
     >
       <Form.Item
         name="email"
-        label="E-mail"
+        className="input"
         rules={[
           {
             type: 'email',
-            message: 'The input is not valid E-mail!',
+            message: 'The input is not valid Email!',
           },
           {
             required: true,
-            message: 'Please input your E-mail!',
+            message: 'Please input your Email!',
           },
         ]}
       >
-        <Input />
+        <Input placeholder="Email" />
       </Form.Item>
 
       <Form.Item
         name="password"
-        label="Password"
+        className="input"
         rules={[
           {
             required: true,
             message: 'Please input your password!',
           },
+          {
+            type: 'string',
+            min: 9,
+            message: 'Password must be at least 9 characters',
+          },
         ]}
-        hasFeedback
       >
-        <Input.Password />
+        <Input.Password placeholder="Password" />
       </Form.Item>
 
       <Form.Item {...tailFormItemLayout}>
-        <Button type="primary" htmlType="submit">
+        <Button
+          type="primary"
+          htmlType="submit"
+          className="register-form-button"
+        >
           Register
         </Button>
-        <Link to={routes.homepage}><p>Homepage</p></Link>
+        <Link to={routes.homepage}>
+          <p>Homepage</p>
+        </Link>
       </Form.Item>
     </Form>
-
-  );
-};
+  )
+}

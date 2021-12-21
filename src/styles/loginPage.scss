@@ -1,4 +1,27 @@
-.header {
-    color: #8B0000;
-    font-size: 2em;
+$backColor: #0f0f0f;
+$baseColor: #FFFFFF;
+$button: #A52A2A;
+$font: #751a22;
+
+@mixin flex {
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
 }
+
+.login-form {
+    @include flex;
+    background: $baseColor;
+    width: 350px;
+    height: 450px;
+    
+}
+
+.input{
+    font-size: 1rem;
+}
+
+.login-form-button {
+    font-size: 2rem;
+}
+

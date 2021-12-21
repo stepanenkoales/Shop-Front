@@ -1,108 +1,88 @@
-import { Form, Input, Button } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
-import { Link, useNavigate } from 'react-router-dom';
-import '../styles/loginPage.scss';
-import { routes } from '../config/routes';
-import { httpsService } from '../utils/https.service';
-import { storageService } from '../utils/storage.service';
-
+import { Form, Input, Button } from 'antd'
+import { UserOutlined, LockOutlined } from '@ant-design/icons'
+import { Link, useNavigate } from 'react-router-dom'
+import { routes } from '../config/routes'
+import { httpsService } from '../utils/https.service'
+import { storageService } from '../utils/storage.service'
+import '../styles/loginPage.scss'
 
 export const LoginForm = () => {
-    const navigate = useNavigate();
-   
+  const navigate = useNavigate()
 
-    const handleLogin = async (body) => {       
-      
-      try { 
-        const response = await httpsService.post('/user/login', body);
-        
-        //console.log(response);
-        
-        if (response) {
-          storageService.set('accessToken', response.accessToken);
-          storageService.set('refreshToken', response.refreshToken);
-          navigate(routes.homepage);
-        }
-        
+  const handleLogin = async (body) => {
+    try {
+      const response = await httpsService.post('/user/login', body)
 
-      } catch (e) {
-        //change e.message to e.status
-
-        console.log(e)
-        /*switch (e.status) {
-          case 401:
-            console.log('Unauthorized');
-            // render page with error
-            break;
-          case 'jwt expired':
-            console.log('jwt expired');
-          break;           
-          case 'email not found':
-            console.log('email not found');
-            break;
-          case 'user not verified':
-            console.log('user not verified');
-            break;
-          case 'wrong pass':
-            console.log('wrong pass');
-          break;
-          default:
-            console.log(e);
-        }
-        */
+      if (response.accessToken) {
+        storageService.set('accessToken', response.accessToken)
+        storageService.set('refreshToken', response.refreshToken)
+        navigate(routes.homepage)
       }
-      
-    };
-  
-    return (
-      <Form
-        name="normal_login"
-        className="login-form"
-        initialValues={{
-          remember: true,
-        }}
-        onFinish={handleLogin}
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  return (
+    <Form
+      name="login"
+      className="login-form"
+      initialValues={{
+        remember: true,
+      }}
+      onFinish={handleLogin}
+    >
+      <Form.Item
+        name="email"
+        className="input"
+        rules={[
+          {
+            type: 'email',
+            message: 'The input is not valid Email!',
+          },
+          {
+            required: true,
+            message: 'Please input your Email!',
+          },
+        ]}
       >
-        <Form.Item
-          name="email"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your Username!',
-            },
-          ]}
-        >
-          <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
-        </Form.Item>
+        <Input
+          prefix={<UserOutlined className="site-form-item-icon" />}
+          placeholder="Email"
+        />
+      </Form.Item>
 
-        <Form.Item
-          name="password"
-          rules={[
-            {
-              required: true,
-              message: 'Please input your Password!',
-            },
-          ]}
-        >
+      <Form.Item
+        name="password"
+        className="input"
+        rules={[
+          {
+            required: true,
+            message: 'Please input your Password!',
+          },
+          {
+            type: 'string',
+            min: 9,
+            message: 'Password must be at least 9 characters',
+          },
+        ]}
+      >
+        <Input
+          prefix={<LockOutlined className="site-form-item-icon" />}
+          type="password"
+          placeholder="Password"
+        />
+      </Form.Item>
 
-          <Input
-            prefix={<LockOutlined className="site-form-item-icon" />}
-            type="password"
-            placeholder="Password"
-          />
-
-        </Form.Item>
-
-  
-        <Form.Item>
-          <Button type="primary" htmlType="submit" className="login-form-button">
-            Login
-          </Button>
-          Or <Link to='/register'>register now!</Link>
-          
-          <Link to={routes.homepage}><p>Homepage</p></Link>
-        </Form.Item>
-
-      </Form>
-    );
-};
+      <Form.Item>
+        <Button type="primary" htmlType="submit" className="login-form-button">
+          Login
+        </Button>
+        or <Link to="/register">register now!</Link>
+        <Link to={routes.homepage}>
+          <p>Homepage</p>
+        </Link>
+      </Form.Item>
+    </Form>
+  )
+}
