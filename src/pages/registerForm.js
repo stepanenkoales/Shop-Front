@@ -2,51 +2,32 @@ import { Form, Input, Button } from 'antd'
 import { Link } from 'react-router-dom'
 import { routes } from '../config/routes'
 import { httpsService } from '../utils/https.service'
-import '../styles/registerPage.scss'
-
-const formItemLayout = {
-  labelCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 8,
-    },
-  },
-  wrapperCol: {
-    xs: {
-      span: 24,
-    },
-    sm: {
-      span: 16,
-    },
-  },
-}
-const tailFormItemLayout = {
-  wrapperCol: {
-    xs: {
-      span: 24,
-      offset: 0,
-    },
-    sm: {
-      span: 16,
-      offset: 8,
-    },
-  },
-}
+import { notificationService } from '../utils/notification.service'
+import '../styles/registerForm.scss'
 
 export const RegisterForm = () => {
-  const [form] = Form.useForm()
-
   const handleRegister = async (body) => {
-    await httpsService.post('/user', body)
+    try {
+      await httpsService.post('/user', body)
+      notificationService.openNotification(
+        'info',
+        '',
+        'In order to complete the login, please click the link in the email we just sent!',
+        10
+      )
+    } catch (err) {
+      notificationService.openNotification(
+        'error',
+        err.response.statusText,
+        err.response.data.message,
+        6
+      )
+    }
   }
 
   return (
     <Form
-      {...formItemLayout}
-      form={form}
-      name="register"
+      name="register-form"
       className="register-form"
       onFinish={handleRegister}
     >
@@ -85,17 +66,13 @@ export const RegisterForm = () => {
         <Input.Password placeholder="Password" />
       </Form.Item>
 
-      <Form.Item {...tailFormItemLayout}>
-        <Button
-          type="primary"
-          htmlType="submit"
-          className="register-form-button"
-        >
+      <Form.Item>
+        <Button type="primary" htmlType="submit" className="register-button">
           Register
         </Button>
-        <Link to={routes.homepage}>
-          <p>Homepage</p>
-        </Link>
+        <p>
+          return to <Link to={routes.homepage}>Homepage</Link>
+        </p>
       </Form.Item>
     </Form>
   )

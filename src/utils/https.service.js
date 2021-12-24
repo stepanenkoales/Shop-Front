@@ -1,7 +1,6 @@
 import axios from 'axios'
 import { config as conf } from '../config/conf'
 import { storageService } from './storage.service'
-import { notificationService } from './notification.service'
 
 class HttpsService {
   get(url, options) {
@@ -40,42 +39,36 @@ class HttpsService {
   }
 
   makeRequest(config) {
-    const token = storageService.get('accessToken')
-    if (token) {
-      config.headers = { Authorization: 'Bearer' + token }
+    const accessToken = storageService.get('accessToken')
+
+    if (accessToken) {
+      config.headers = { Authorization: 'Bearer' + accessToken }
     }
 
     return axios({
       ...config,
       url: conf.baseUrl + config.url,
     })
-      .then((response) => response.data)
+      .then((res) => res.data)
       .catch((err) => {
-        switch (err.response.status) {
-          case 401:
-            notificationService.openNotification(
-              'error',
-              err.response.statusText,
-              err.response.data.message
-            )
-            if (err.response.data.message === 'token expired') {
-            }
-            break
-          case 409:
-            notificationService.openNotification(
-              'error',
-              err.response.statusText,
-              err.response.data.message
-            )
-            break
-          default:
-            notificationService.openNotification(
-              'error',
-              err.response.statusText,
-              err.response.data.message
-            )
+        const refreshToken = localStorage.getItem('refreshToken')
+
+        if (err.response.status === 401 && refreshToken) {
+          return this.post('/user/refresh', { refreshToken })
+            .then((res) => {
+              storageService.set('accessToken', res.accessToken)
+              storageService.set('refreshToken', res.refreshToken)
+              return this.makeRequest(config)
+            })
+            .catch((err) => {
+              storageService.remove('accessToken')
+              storageService.remove('refreshToken')
+
+              throw err
+            })
         }
-        return err.response
+
+        throw err
       })
   }
 }

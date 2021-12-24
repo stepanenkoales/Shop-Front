@@ -1,11 +1,11 @@
 import { notification } from 'antd'
 
 class NotificationService {
-  openNotification(type, message, description) {
+  openNotification(type, message, description, duration) {
     notification[type]({
-      message: 'Error: ' + message,
+      message: `${type}: ${message}`,
       description,
-      default: 6,
+      duration,
     })
   }
 }

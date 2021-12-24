@@ -4,7 +4,7 @@ class StorageService {
   }
 
   get(key) {
-    localStorage.getItem(key)
+    return localStorage.getItem(key)
   }
 
   remove(key) {

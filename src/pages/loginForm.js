@@ -1,10 +1,11 @@
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, Checkbox } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { Link, useNavigate } from 'react-router-dom'
 import { routes } from '../config/routes'
 import { httpsService } from '../utils/https.service'
 import { storageService } from '../utils/storage.service'
-import '../styles/loginPage.scss'
+import '../styles/loginForm.scss'
+import { notificationService } from '../utils/notification.service'
 
 export const LoginForm = () => {
   const navigate = useNavigate()
@@ -12,14 +13,43 @@ export const LoginForm = () => {
   const handleLogin = async (body) => {
     try {
       const response = await httpsService.post('/user/login', body)
-
-      if (response.accessToken) {
-        storageService.set('accessToken', response.accessToken)
-        storageService.set('refreshToken', response.refreshToken)
-        navigate(routes.homepage)
-      }
+      storageService.set('accessToken', response.accessToken)
+      body.remember
+        ? storageService.set('refreshToken', response.refreshToken)
+        : storageService.set('refreshToken', null)
+      notificationService.openNotification(
+        'success',
+        '',
+        'You are logged in!',
+        6
+      )
+      navigate(routes.homepage)
     } catch (err) {
-      console.log(err)
+      switch (err.response.status) {
+        case 400:
+          notificationService.openNotification(
+            'error',
+            err.response.statusText,
+            err.response.data.message,
+            6
+          )
+          break
+        case 401:
+          notificationService.openNotification(
+            'error',
+            err.response.statusText,
+            'Please login!',
+            6
+          )
+          break
+        default:
+          notificationService.openNotification(
+            'error',
+            err.response.statusText,
+            err.response.data.message,
+            6
+          )
+      }
     }
   }
 
@@ -75,13 +105,25 @@ export const LoginForm = () => {
       </Form.Item>
 
       <Form.Item>
+        <Form.Item name="remember" valuePropName="checked" noStyle>
+          <Checkbox>Remember me</Checkbox>
+        </Form.Item>
+        <Link to={routes.reset}>Forgot password</Link>
+      </Form.Item>
+
+      <Form.Item>
         <Button type="primary" htmlType="submit" className="login-form-button">
           Login
         </Button>
-        or <Link to="/register">register now!</Link>
-        <Link to={routes.homepage}>
-          <p>Homepage</p>
-        </Link>
+        <div className="footer-text">
+          <p>
+            Don't have an account yet?
+            <Link to={routes.register}> Register</Link>
+          </p>
+          <p>
+            return to <Link to={routes.homepage}>Homepage</Link>
+          </p>
+        </div>
       </Form.Item>
     </Form>
   )

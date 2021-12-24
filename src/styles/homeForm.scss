@@ -1,0 +1,32 @@
+$backColor: #0f0f0f;
+$baseColor: #FFFFFF;
+
+.header {
+  position: fixed;
+  width: 100%;
+  
+}
+
+.site-layout {
+    background: #fff;
+    padding: 0 50px !important;
+    margin-top: 64px !important;
+}
+
+.breadcrumb{
+    margin: 20px 0 !important;
+}
+.site-layout-background {
+    padding: 24px; 
+    min-height: 500px; 
+    background: $baseColor;
+}
+
+[data-theme="dark"] .site-layout .site-layout-background {
+    background: #141414;
+}
+
+.footer{
+    text-align: center;
+    background: $baseColor !important;
+} 
