@@ -1,39 +1,28 @@
-$primary: #0f0f0f;
-$baseColor: #232B32;
-$button: #A52A2A;
-$font: #ffffff;
-$neutralDark: #212121;
-$neutralPrimary: #3c3c3c;
-$neutralSecondary: #666666;
-$neutralQuaternary: #d0d0d0;
+@import "./mixins.scss";
+@import "./colors.scss";
 
-@mixin flex {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: column; 
-    
+.container {
+    @include flex;
+    height: 100vh;
 }
 
-.ant-form.register-form{
+.ant-form {
     @include flex;
     width: 400px;
     height: 500px;
-    font-size: 1rem;
     border-radius: 15px;
     border: 2px solid;
-    margin: 200px 0 0 650px;
-    
+    text-align: center;
 }
 
-h2, p {
-    text-align: center; 
-}
-
-.ant-btn.ant-btn-primary.register-button {
-    border: none;
-    width: 250px;
-    border-radius: 10px;
-    margin: 30px;
-    font-size: 1rem;
+.ant-btn {
+    &.ant-btn-primary {
+        &.register-button {
+            border: none;
+            width: 250px;
+            border-radius: 10px;
+            margin: 30px;
+            font-size: 1rem;
+        }
+    }
 }

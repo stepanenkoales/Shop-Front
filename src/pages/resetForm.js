@@ -11,37 +11,26 @@ export const ResetForm = () => {
 
   const handleReset = async (body) => {
     try {
-      const response = await httpsService.post('/user/reset', body)
-
-      if (response) {
-        notificationService.openNotification(
-          'info',
-          '',
-          'New password was sent to your email!',
-          10
-        )
-        navigate(routes.login)
-      } else {
-        notificationService.openNotification(
-          'error',
-          '',
-          'This email is not valid or not supported',
-          10
-        )
-      }
+      await httpsService.post('/user/reset', body)
+      notificationService.openNotification({
+        type: 'info',
+        description: 'New password was sent to your email.',
+        duration: 10,
+      })
+      navigate(routes.login)
     } catch (err) {
-      notificationService.openNotification(
-        'error',
-        err.response.statusText,
-        err.response.data.message,
-        10
-      )
+      notificationService.openNotification({
+        type: 'error',
+        message: err.response.statusText,
+        description: err.response.data.message,
+        duration: 10,
+      })
     }
   }
 
   return (
     <div className="container">
-      <Form name="reset-form" className="reset-form" onFinish={handleReset}>
+      <Form name="reset-form" onFinish={handleReset}>
         <div>
           <h2>Having trouble logging in?</h2>
           <p>Enter your email to get started</p>
@@ -70,9 +59,9 @@ export const ResetForm = () => {
           <Button type="primary" htmlType="submit" className="reset-button">
             Reset password
           </Button>
-          <p>
+          <div>
             return to <Link to={routes.login}>Login</Link>
-          </p>
+          </div>
         </Form.Item>
       </Form>
     </div>
