@@ -1,0 +1,28 @@
+@import "./mixins.scss";
+@import "./colors.scss";
+
+.container {
+    @include flex;
+    height: 100vh;
+}
+
+.ant-form {
+    @include flex;
+    width: 400px;
+    height: 500px;
+    border-radius: 15px;
+    border: 2px solid;
+    text-align: center;
+}
+
+.ant-btn {
+    &.ant-btn-primary {
+        &.reset-button {
+            border: none;
+            width: 250px;
+            border-radius: 10px;
+            margin: 30px;
+            font-size: 1rem;
+        }
+    }
+}

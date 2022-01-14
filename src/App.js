@@ -1,17 +1,20 @@
-import React from 'react';
-import { LoginPage } from './pages/loginPage';
-import { RegisterPage } from './pages/registerPage';
-import { HomePage } from './pages/homePage';
-import { Routes, Route } from 'react-router-dom';
+import React from 'react'
+import { HomePage } from './pages/homePage'
+import { LoginForm } from './pages/loginForm'
+import { RegisterForm } from './pages/registerForm'
+import { ResetForm } from './pages/resetForm'
+
+import { Routes, Route } from 'react-router-dom'
+import { routes } from './config/routes'
+import 'antd/dist/antd.css'
 
 export const App = () => {
   return (
     <Routes>
-      <Route path='/' element={<HomePage />} />
-      <Route exact path='/login' element={<LoginPage />} />
-      <Route exact path='/register' element={<RegisterPage />} />
+      <Route path={routes.homepage} element={<HomePage />} />
+      <Route exact path={routes.login} element={<LoginForm />} />
+      <Route exact path={routes.register} element={<RegisterForm />} />
+      <Route exact path={routes.reset} element={<ResetForm />} />
     </Routes>
   )
 }
-
-
