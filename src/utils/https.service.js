@@ -42,7 +42,7 @@ class HttpsService {
     const accessToken = storageService.get('accessToken')
 
     if (accessToken) {
-      config.headers = { Authorization: 'Bearer' + accessToken }
+      config.headers = { Authorization: 'Bearer ' + accessToken }
     }
 
     return axios({
@@ -51,7 +51,7 @@ class HttpsService {
     })
       .then((res) => res.data)
       .catch((err) => {
-        const refreshToken = localStorage.getItem('refreshToken')
+        const refreshToken = storageService.get('refreshToken')
 
         if (err.response.status === 401 && refreshToken) {
           return this.post('/user/refresh', { refreshToken })
