@@ -39,9 +39,6 @@ export const AddItemForm = () => {
         duration: 10,
       })
     } catch (error) {
-      console.log(error.response)
-      console.log(error.response.data.message)
-
       const err = error?.response?.data?.message
 
       if (err) {

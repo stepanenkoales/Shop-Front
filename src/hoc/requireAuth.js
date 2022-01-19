@@ -20,7 +20,6 @@ export const RequireAuth = ({ children }) => {
     httpsService
       .get('/user')
       .then((res) => {
-        console.log(res)
         setUser(res)
       })
       .finally(() => setIsLoading(false))

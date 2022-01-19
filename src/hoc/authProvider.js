@@ -9,15 +9,10 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
 
-  //storageService.remove('accessToken')
-  //storageService.remove('refreshToken')
-
   const login = (newUser, callback) => {
     setUser(newUser)
     callback()
   }
-
-  console.log(1)
 
   useEffect(() => {
     if (!storageService.get('accessToken')) {
@@ -34,10 +29,6 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(false)
       })
   }, [])
-
-  console.log(2)
-  console.log(user)
-  console.log(isLoading)
 
   if (isLoading) return null
 

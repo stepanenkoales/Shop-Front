@@ -51,9 +51,6 @@ class HttpsService {
     })
       .then((res) => res.data)
       .catch((err) => {
-        console.log(err)
-        console.log(err.response)
-
         const refreshToken = storageService.get('refreshToken')
 
         if (err.response.status === 401 && refreshToken) {

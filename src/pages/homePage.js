@@ -32,7 +32,6 @@ export const HomePage = () => {
   }, [])
 
   const handleSubCategoriesChange = (e) => {
-    console.log(e)
     const chosenSubCategories = categories.filter(
       (category) => category.parentId === e.key
     )
@@ -40,7 +39,6 @@ export const HomePage = () => {
   }
 
   const handleItemsChange = async (e) => {
-    console.log(e)
     setSearchValue(null)
     const response = await httpsService.get('/items/', {
       params: {
@@ -55,8 +53,6 @@ export const HomePage = () => {
   }
 
   const onPaginationChange = async (pagination) => {
-    console.log(pagination)
-    console.log(categoryId)
     const response = await httpsService.get('/items/', {
       params: {
         categoryId,
@@ -70,8 +66,6 @@ export const HomePage = () => {
   }
 
   const onSearch = async (value) => {
-    console.log(value)
-    console.log(categoryId)
     if (!value.trim()) {
       return null
     }
@@ -82,7 +76,6 @@ export const HomePage = () => {
         categoryId,
       },
     })
-    console.log(response)
     const { rows, count } = response
 
     setItems(rows)
