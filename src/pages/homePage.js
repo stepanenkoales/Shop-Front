@@ -11,6 +11,7 @@ export const HomePage = () => {
   const [categories, setCategories] = useState([])
   const [subCategories, setSubCategories] = useState([])
   const [categoryId, setCategoryId] = useState(null)
+  const [searchValue, setSearchValue] = useState(null)
   const [totalPages, setTotalPages] = useState(0)
 
   const { Header, Content, Footer, Sider } = Layout
@@ -31,6 +32,7 @@ export const HomePage = () => {
   }, [])
 
   const handleSubCategoriesChange = (e) => {
+    console.log(e)
     const chosenSubCategories = categories.filter(
       (category) => category.parentId === e.key
     )
@@ -38,6 +40,8 @@ export const HomePage = () => {
   }
 
   const handleItemsChange = async (e) => {
+    console.log(e)
+    setSearchValue(null)
     const response = await httpsService.get('/items/', {
       params: {
         categoryId: e.key,
@@ -51,11 +55,14 @@ export const HomePage = () => {
   }
 
   const onPaginationChange = async (pagination) => {
+    console.log(pagination)
+    console.log(categoryId)
     const response = await httpsService.get('/items/', {
       params: {
         categoryId,
         currentPage: pagination.current,
         pageSize: pagination.pageSize,
+        name: searchValue,
       },
     })
     const { rows } = response
@@ -63,17 +70,19 @@ export const HomePage = () => {
   }
 
   const onSearch = async (value) => {
-    const response = await httpsService.get(
-      '/items/',
-      value
-        ? {
-            params: {
-              name: value,
-              categoryId,
-            },
-          }
-        : undefined
-    )
+    console.log(value)
+    console.log(categoryId)
+    if (!value.trim()) {
+      return null
+    }
+    setSearchValue(value.trim())
+    const response = await httpsService.get('/items/', {
+      params: {
+        name: value.trim(),
+        categoryId,
+      },
+    })
+    console.log(response)
     const { rows, count } = response
 
     setItems(rows)
@@ -114,6 +123,7 @@ export const HomePage = () => {
               placeholder="input search text"
               allowClear
               onSearch={onSearch}
+              size="large"
             />
           </Space>
 

@@ -26,6 +26,11 @@ export const AddItemForm = () => {
   }, [])
 
   const onFinish = async (values) => {
+    values.items.forEach((item) => {
+      item.name = item.name.trim()
+      item.description = item.description.trim()
+    })
+
     try {
       await httpsService.post('/items', values.items)
       notificationService.openNotification({
@@ -34,14 +39,20 @@ export const AddItemForm = () => {
         duration: 10,
       })
     } catch (error) {
-      if (error.response.data.errors) {
+      console.log(error.response)
+      console.log(error.response.data.message)
+
+      const err = error?.response?.data?.message
+
+      if (err) {
         return notificationService.openNotification({
           type: 'error',
-          message: error.response.data.errors[0].message,
-          description: `${error.response.data.errors[0].type} on name: ${error.response.data?.errors[0].value}`,
+          message: err.message,
+          description: `${err.type} on name: ${err.value}`,
           duration: 20,
         })
       }
+
       notificationService.openNotification({
         type: 'error',
         message: 'invalid data type',
@@ -94,7 +105,18 @@ export const AddItemForm = () => {
                       {...field}
                       label="Name"
                       name={[field.name, 'name']}
-                      rules={[{ required: true, message: 'Missing name' }]}
+                      rules={[
+                        {
+                          required: true,
+                          message: 'Missing name',
+                          validator: (rule, value) => {
+                            if (!value.trim()) {
+                              return Promise.reject(new Error())
+                            }
+                            return Promise.resolve()
+                          },
+                        },
+                      ]}
                     >
                       <Input />
                     </Form.Item>
@@ -107,6 +129,12 @@ export const AddItemForm = () => {
                         {
                           required: true,
                           message: 'Missing price',
+                          validator: (rule, value) => {
+                            if (!Number(value.trim())) {
+                              return Promise.reject(new Error())
+                            }
+                            return Promise.resolve()
+                          },
                         },
                       ]}
                     >
@@ -117,7 +145,16 @@ export const AddItemForm = () => {
                       label="Description"
                       name={[field.name, 'description']}
                       rules={[
-                        { required: true, message: 'Missing description' },
+                        {
+                          required: true,
+                          message: 'Missing description',
+                          validator: (rule, value) => {
+                            if (!value.trim()) {
+                              return Promise.reject(new Error())
+                            }
+                            return Promise.resolve()
+                          },
+                        },
                       ]}
                     >
                       <Input />

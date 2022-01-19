@@ -20,13 +20,13 @@ export const LoginForm = () => {
     try {
       const response = await httpsService.post('/user/login', body)
       const { user, accessToken, refreshToken } = response
-
+      storageService.set('accessToken', accessToken)
       login(user, () => navigate(fromPage, { replace: true }))
 
-      storageService.set('accessToken', accessToken)
       body.remember
         ? storageService.set('refreshToken', refreshToken)
         : storageService.set('refreshToken', null)
+
       notificationService.openNotification({
         type: 'success',
         description: 'You are logged in!',

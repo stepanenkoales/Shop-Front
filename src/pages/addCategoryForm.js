@@ -20,15 +20,14 @@ export const AddCategoryForm = () => {
         },
       })
       .then((res) => {
-        res.push({ id: 1, category: 'add parent category' })
-
+        res.push({ id: null, category: 'no category' })
         setCategories(res)
       })
   }, [])
 
   const onFinish = async (values) => {
-    values.category.map((item) => {
-      if (item.parentId === 1) item.parentId = null
+    values.category.forEach((item) => {
+      item.category = item.category.trim()
     })
 
     try {
@@ -39,10 +38,20 @@ export const AddCategoryForm = () => {
         duration: 10,
       })
     } catch (error) {
+      const err = error?.response?.data?.message
+
+      if (err) {
+        return notificationService.openNotification({
+          type: 'error',
+          message: `${err.message}!`,
+          description: `${err.type} on name: ${err.value}`,
+          duration: 20,
+        })
+      }
+
       notificationService.openNotification({
         type: 'error',
-        message: `${error.response.data.errors[0].message}!`,
-        description: `${error.response.data.errors[0].type} on name: ${error.response.data.errors[0].value}`,
+        message: 'invalid data type',
         duration: 20,
       })
     }
@@ -72,11 +81,10 @@ export const AddCategoryForm = () => {
                         {...field}
                         label="Parent"
                         name={[field.name, 'parentId']}
-                        rules={[{ required: true, message: 'Missing parent' }]}
                       >
                         <Select>
                           {categories.map((item) => (
-                            <Option key={item.id} value={item.id}>
+                            <Option key={item.category} value={item.id}>
                               {item.category}
                             </Option>
                           ))}
@@ -89,7 +97,18 @@ export const AddCategoryForm = () => {
                     {...field}
                     label="Category"
                     name={[field.name, 'category']}
-                    rules={[{ required: true, message: 'Missing category' }]}
+                    rules={[
+                      {
+                        required: true,
+                        message: 'Missing category',
+                        validator: (rule, value) => {
+                          if (!value.trim()) {
+                            return Promise.reject(new Error())
+                          }
+                          return Promise.resolve()
+                        },
+                      },
+                    ]}
                   >
                     <Input />
                   </Form.Item>
