@@ -7,9 +7,10 @@ import { notificationService } from '../utils/notification.service'
 import { httpsService } from '../utils/https.service'
 import '../styles/adminForm.scss'
 
+const { Option } = Select
+
 export const AddCategoryForm = () => {
   const [categories, setCategories] = useState([])
-  const { Option } = Select
   const [form] = Form.useForm()
 
   useEffect(() => {

@@ -10,7 +10,7 @@ import { UpdateItemForm } from './pages/updateItemForm'
 import { DeleteItemForm } from './pages/deleteItemForm'
 import { Routes, Route } from 'react-router-dom'
 import { routes } from './config/routes'
-import { RequireAuth } from './hoc/requireAuth'
+import { AdminGuard } from './hoc/adminGuard'
 import { AuthProvider } from './hoc/authProvider'
 import 'antd/dist/antd.css'
 
@@ -26,41 +26,41 @@ export const App = () => {
         <Route
           path={routes.admin}
           element={
-            <RequireAuth>
+            <AdminGuard>
               <AdminForm />
-            </RequireAuth>
+            </AdminGuard>
           }
         />
         <Route
           path={routes.addCategory}
           element={
-            <RequireAuth>
+            <AdminGuard>
               <AddCategoryForm />
-            </RequireAuth>
+            </AdminGuard>
           }
         />
         <Route
           path={routes.addItem}
           element={
-            <RequireAuth>
+            <AdminGuard>
               <AddItemForm />
-            </RequireAuth>
+            </AdminGuard>
           }
         />
         <Route
           path={routes.updateItem}
           element={
-            <RequireAuth>
+            <AdminGuard>
               <UpdateItemForm />
-            </RequireAuth>
+            </AdminGuard>
           }
         />
         <Route
           path={routes.deleteItem}
           element={
-            <RequireAuth>
+            <AdminGuard>
               <DeleteItemForm />
-            </RequireAuth>
+            </AdminGuard>
           }
         />
       </Routes>

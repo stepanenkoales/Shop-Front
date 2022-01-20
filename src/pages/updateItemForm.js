@@ -6,10 +6,11 @@ import { notificationService } from '../utils/notification.service'
 import { Form, Input, Button, Select } from 'antd'
 import '../styles/adminForm.scss'
 
+const { Option } = Select
+
 export const UpdateItemForm = () => {
   const [categories, setCategories] = useState([])
   const [items, setItems] = useState([])
-  const { Option } = Select
 
   useEffect(() => {
     httpsService

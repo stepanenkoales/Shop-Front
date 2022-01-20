@@ -5,13 +5,13 @@ import { httpsService } from '../utils/https.service'
 import { notificationService } from '../utils/notification.service'
 import { Form, Input, Button, Space, Select } from 'antd'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
-
 import '../styles/adminForm.scss'
+
+const { Option } = Select
 
 export const AddItemForm = () => {
   const [form] = Form.useForm()
   const [categories, setCategories] = useState([])
-  const { Option } = Select
 
   useEffect(() => {
     httpsService

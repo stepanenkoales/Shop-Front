@@ -1,10 +1,35 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Image, Layout, Menu, Input, Space, Table } from 'antd'
 import { Link } from 'react-router-dom'
 import { routes } from '../config/routes'
 import { httpsService } from '../utils/https.service'
 import logo from '../styles/images/logo.png'
 import '../styles/homeForm.scss'
+
+const { Header, Content, Footer, Sider } = Layout
+const { Search } = Input
+
+const columns = [
+  {
+    title: 'image',
+    dataIndex: 'image',
+  },
+  {
+    title: 'Name',
+    dataIndex: 'name',
+    sorter: (a, b) => a.name - b.name,
+  },
+  {
+    title: 'Price',
+    dataIndex: 'price',
+    sorter: (a, b) => a.price - b.price,
+  },
+  {
+    title: 'Description',
+    dataIndex: 'description',
+  },
+]
+const onKeyChange = (items) => items.id
 
 export const HomePage = () => {
   const [items, setItems] = useState([])
@@ -14,12 +39,13 @@ export const HomePage = () => {
   const [searchValue, setSearchValue] = useState(null)
   const [totalPages, setTotalPages] = useState(0)
 
-  const { Header, Content, Footer, Sider } = Layout
-  const { Search } = Input
-
-  const parentCategories = categories.filter((item) => item.parentId === null)
+  const parentCategories = useMemo(
+    () => categories.filter((item) => item.parentId === null),
+    [categories]
+  )
 
   useEffect(() => {
+    console.log('useEffe HP')
     httpsService
       .get('/categories/', {
         params: {
@@ -31,12 +57,17 @@ export const HomePage = () => {
       })
   }, [])
 
-  const handleSubCategoriesChange = (e) => {
-    const chosenSubCategories = categories.filter(
-      (category) => category.parentId === e.key
-    )
-    setSubCategories(chosenSubCategories)
-  }
+  const handleSubCategoriesChange = useCallback(
+    (e) => {
+      setItems([])
+      setTotalPages(0)
+      const chosenSubCategories = categories.filter(
+        (category) => category.parentId === e.key
+      )
+      setSubCategories(chosenSubCategories)
+    },
+    [categories]
+  )
 
   const handleItemsChange = async (e) => {
     setSearchValue(null)
@@ -81,27 +112,6 @@ export const HomePage = () => {
     setItems(rows)
     setTotalPages(count)
   }
-
-  const columns = [
-    {
-      title: 'image',
-      dataIndex: 'image',
-    },
-    {
-      title: 'Name',
-      dataIndex: 'name',
-      sorter: (a, b) => a.name - b.name,
-    },
-    {
-      title: 'Price',
-      dataIndex: 'price',
-      sorter: (a, b) => a.price - b.price,
-    },
-    {
-      title: 'Description',
-      dataIndex: 'description',
-    },
-  ]
 
   return (
     <Layout>
@@ -155,7 +165,7 @@ export const HomePage = () => {
         <div className="content">
           <Content className="site-layout">
             <Table
-              rowKey={(items) => items.id}
+              rowKey={onKeyChange}
               columns={columns}
               dataSource={items}
               pagination={{
