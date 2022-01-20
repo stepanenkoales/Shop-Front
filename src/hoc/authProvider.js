@@ -14,9 +14,6 @@ export const AuthProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    console.log('useEffe AP')
-    console.log(storageService.get('accessToken'))
-    console.log(user)
     if (!storageService.get('accessToken')) {
       return
     }
@@ -25,7 +22,6 @@ export const AuthProvider = ({ children }) => {
     httpsService
       .get('/user')
       .then((res) => {
-        console.log(2)
         setUser(res)
       })
       .finally(() => {

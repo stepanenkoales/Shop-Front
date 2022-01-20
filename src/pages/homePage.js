@@ -45,7 +45,6 @@ export const HomePage = () => {
   )
 
   useEffect(() => {
-    console.log('useEffe HP')
     httpsService
       .get('/categories/', {
         params: {
