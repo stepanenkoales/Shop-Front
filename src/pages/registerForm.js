@@ -68,7 +68,7 @@ export const RegisterForm = () => {
             Register
           </Button>
           <p>
-            return to <Link to={routes.homepage}>Homepage</Link>
+            return to <Link to={routes.homePage}>Homepage</Link>
           </p>
         </Form.Item>
       </Form>

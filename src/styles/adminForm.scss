@@ -1,0 +1,42 @@
+@import "./mixins.scss";
+@import "./colors.scss";
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.container-admin {
+    @include flex;
+    height: 100vh;
+}
+
+.ant-select-selector {
+    width: 200px !important;
+}
+
+#dynamic_form_nest_item {
+    border-color: $baseColor;
+}
+
+.ant-btn {
+    &.ant-btn-primary {
+        &.admin-button {
+            border: none;
+            width: 250px;
+            border-radius: 10px;
+            margin: 30px;
+            font-size: 1rem;
+        }
+        &.ant-btn-block {
+            border: none;
+            width: 250px;
+            border-radius: 10px;
+            margin: 30px;
+            font-size: 1rem;
+        }
+    }
+}
