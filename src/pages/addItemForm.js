@@ -1,10 +1,16 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { routes } from '../config/routes'
 import { httpsService } from '../utils/https.service'
+import { cloudinaryService } from '../utils/cloudinary.service'
 import { notificationService } from '../utils/notification.service'
-import { Form, Input, Button, Space, Select } from 'antd'
-import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
+import { Form, Input, Button, Space, Select, Upload } from 'antd'
+import {
+  MinusCircleOutlined,
+  PlusOutlined,
+  UploadOutlined,
+} from '@ant-design/icons'
+
 import '../styles/adminForm.scss'
 
 const { Option } = Select
@@ -12,6 +18,7 @@ const { Option } = Select
 export const AddItemForm = () => {
   const [form] = Form.useForm()
   const [categories, setCategories] = useState([])
+  const navigate = useNavigate()
 
   useEffect(() => {
     httpsService
@@ -25,8 +32,49 @@ export const AddItemForm = () => {
       })
   }, [])
 
+  const props = {
+    maxCount: 1,
+  }
+
+  const handleImageUpload = async (info) => {
+    const { onSuccess, onError, file } = info
+
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onloadend = async () => {
+      try {
+        const response = await cloudinaryService.uploadImage(reader.result)
+
+        onSuccess({
+          url: 'url',
+          public_id: response,
+        })
+      } catch (err) {
+        onError(err)
+      }
+    }
+  }
+
+  const handleImageRemove = async (info) => {
+    try {
+      const response = await cloudinaryService.deleteImage(
+        info?.response?.public_id
+      )
+
+      if (response.result !== 'ok') {
+        throw new Error('not deleted')
+      }
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
   const onFinish = async (values) => {
     values.items.forEach((item) => {
+      item.image.fileList.length === 0
+        ? (item.image = null)
+        : (item.image = item.image.fileList[0].response.public_id)
+
       item.name = item.name.trim()
       item.description = item.description.trim()
     })
@@ -38,10 +86,11 @@ export const AddItemForm = () => {
         message: 'Items has been successfully added!',
         duration: 10,
       })
+      navigate(routes.admin)
     } catch (error) {
       const err = error?.response?.data?.message
 
-      if (err) {
+      if (err.type) {
         return notificationService.openNotification({
           type: 'error',
           message: err.message,
@@ -96,6 +145,25 @@ export const AddItemForm = () => {
                           </Select>
                         </Form.Item>
                       )}
+                    </Form.Item>
+
+                    <Form.Item
+                      {...field}
+                      label="Image"
+                      name={[field.name, 'image']}
+                    >
+                      <Upload
+                        customRequest={handleImageUpload}
+                        //onChange={handleOnChange}
+
+                        onRemove={handleImageRemove}
+                        listType="picture"
+                        {...props}
+                      >
+                        <Button icon={<UploadOutlined />}>
+                          Click to Upload
+                        </Button>
+                      </Upload>
                     </Form.Item>
 
                     <Form.Item

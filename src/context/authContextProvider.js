@@ -4,14 +4,9 @@ import { storageService } from '../utils/storage.service'
 
 export const AuthContext = createContext(null)
 
-export const AuthProvider = ({ children }) => {
+export const AuthContextProvider = ({ children }) => {
   const [user, setUser] = useState(null)
   const [isLoading, setIsLoading] = useState(false)
-
-  const login = (newUser, callback) => {
-    setUser(newUser)
-    callback()
-  }
 
   useEffect(() => {
     if (!storageService.get('accessToken')) {
@@ -29,10 +24,16 @@ export const AuthProvider = ({ children }) => {
       })
   }, [])
 
+  const logout = () => {
+    setUser(null)
+    storageService.remove('accessToken')
+    storageService.remove('refreshToken')
+  }
+
   if (isLoading) return null
 
   return (
-    <AuthContext.Provider value={{ user, login, setUser }}>
+    <AuthContext.Provider value={{ user, setUser, logout }}>
       {children}
     </AuthContext.Provider>
   )

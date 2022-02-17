@@ -1,14 +1,13 @@
 import { useContext, useState, useEffect } from 'react'
-import { useLocation, Navigate } from 'react-router-dom'
+import { Navigate } from 'react-router-dom'
 import { AuthContext } from '../context/authContextProvider'
 import { storageService } from '../utils/storage.service'
 import { httpsService } from '../utils/https.service'
 import { routes } from '../config/routes'
 
-export const AdminGuard = ({ children }) => {
+export const UserGuard = ({ children }) => {
   const [isLoading, setIsLoading] = useState(false)
   const { user, setUser } = useContext(AuthContext)
-  const location = useLocation()
   const accessToken = storageService.get('accessToken')
 
   useEffect(() => {
@@ -23,14 +22,16 @@ export const AdminGuard = ({ children }) => {
         setUser(res)
       })
       .finally(() => setIsLoading(false))
+    return () => {
+      setIsLoading(false)
+    }
   }, [accessToken, user, setUser])
 
-  if (!accessToken)
-    return <Navigate to={routes.login} state={{ from: location }} />
+  if (!accessToken) return <Navigate to={routes.login} />
 
   if (isLoading || !user) return null
 
-  if (user?.role === 'admin') return children
+  if (user) return children
 
-  return <Navigate to={routes.login} state={{ from: location }} />
+  return <Navigate to={routes.login} />
 }
