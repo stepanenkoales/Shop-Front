@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { routes } from '../config/routes'
 import { Form, Input, Button, Space, Select } from 'antd'
 import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons'
@@ -12,6 +12,7 @@ const { Option } = Select
 export const AddCategoryForm = () => {
   const [categories, setCategories] = useState([])
   const [form] = Form.useForm()
+  const navigate = useNavigate()
 
   useEffect(() => {
     httpsService
@@ -38,6 +39,7 @@ export const AddCategoryForm = () => {
         description: 'Categories has been successfully added!',
         duration: 10,
       })
+      navigate(routes.admin)
     } catch (error) {
       const err = error?.response?.data?.message
 

@@ -42,18 +42,23 @@ class HttpsService {
     const accessToken = storageService.get('accessToken')
 
     if (accessToken) {
-      config.headers = { Authorization: 'Bearer ' + accessToken }
+      config.headers = {
+        ...config.headers,
+        Authorization: 'Bearer ' + accessToken,
+      }
     }
 
     return axios({
       ...config,
       url: conf.baseUrl + config.url,
     })
-      .then((res) => res.data)
+      .then((res) => {
+        return res.data
+      })
       .catch((err) => {
         const refreshToken = storageService.get('refreshToken')
 
-        if (err.response.status === 401 && refreshToken) {
+        if (err?.response?.status === 401 && refreshToken) {
           return this.post('/user/refresh', { refreshToken })
             .then((res) => {
               storageService.set('accessToken', res.accessToken)

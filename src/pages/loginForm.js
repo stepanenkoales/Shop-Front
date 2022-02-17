@@ -1,8 +1,6 @@
-import { useContext } from 'react'
 import { Form, Input, Button, Checkbox } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
-import { AuthContext } from '../hoc/authProvider'
 import { routes } from '../config/routes'
 import { httpsService } from '../utils/https.service'
 import { storageService } from '../utils/storage.service'
@@ -12,21 +10,17 @@ import '../styles/loginForm.scss'
 export const LoginForm = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { login } = useContext(AuthContext)
-
   const fromPage = location.state?.from?.pathname || routes.homePage
 
   const handleLogin = async (body) => {
     try {
       const response = await httpsService.post('/user/login', body)
-      const { user, accessToken, refreshToken } = response
+      const { accessToken, refreshToken } = response
       storageService.set('accessToken', accessToken)
-      login(user, () => navigate(fromPage, { replace: true }))
-
+      navigate(fromPage, { replace: true })
       body.remember
         ? storageService.set('refreshToken', refreshToken)
         : storageService.set('refreshToken', null)
-
       notificationService.openNotification({
         type: 'success',
         description: 'You are logged in!',

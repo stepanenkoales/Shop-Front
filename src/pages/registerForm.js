@@ -1,11 +1,14 @@
 import { Form, Input, Button } from 'antd'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
+import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import { routes } from '../config/routes'
 import { httpsService } from '../utils/https.service'
 import { notificationService } from '../utils/notification.service'
 import '../styles/registerForm.scss'
 
 export const RegisterForm = () => {
+  const navigate = useNavigate()
+
   const handleRegister = async (body) => {
     try {
       await httpsService.post('/user', body)
@@ -15,6 +18,7 @@ export const RegisterForm = () => {
           'In order to complete the login, please click the link in the email we just sent!',
         duration: 10,
       })
+      navigate(routes.login)
     } catch (err) {
       notificationService.openNotification({
         type: 'error',
@@ -30,7 +34,7 @@ export const RegisterForm = () => {
       <Form name="register-form" onFinish={handleRegister}>
         <Form.Item
           name="email"
-          className="input"
+          className="custom-email-input"
           rules={[
             {
               type: 'email',
@@ -42,7 +46,7 @@ export const RegisterForm = () => {
             },
           ]}
         >
-          <Input placeholder="Email" />
+          <Input placeholder="Email" prefix={<UserOutlined />} />
         </Form.Item>
 
         <Form.Item
@@ -60,7 +64,7 @@ export const RegisterForm = () => {
             },
           ]}
         >
-          <Input.Password placeholder="Password" />
+          <Input.Password placeholder="Password" prefix={<LockOutlined />} />
         </Form.Item>
 
         <Form.Item>
