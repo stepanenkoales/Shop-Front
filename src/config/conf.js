@@ -1,5 +1,5 @@
 export const config = {
-  baseUrl: 'http://localhost:3000',
+  baseUrl: 'https://ecommerce-shop-stsepanenka.herokuapp.com',
   cloudinaryUrl: 'https://api.cloudinary.com/v1_1/',
   cloudName: 'stepanenkoales',
 }
