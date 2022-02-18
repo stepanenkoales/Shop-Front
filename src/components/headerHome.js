@@ -114,9 +114,7 @@ export const HeaderHome = (props) => {
               {props.categories
                 .filter((category) => category.parentId === parentCategory.id)
                 .map((category) => (
-                  <Menu.Item style={{ background: 'red' }} key={category.id}>
-                    {category.category}
-                  </Menu.Item>
+                  <Menu.Item key={category.id}>{category.category}</Menu.Item>
                 ))}
             </SubMenu>
           ))}
