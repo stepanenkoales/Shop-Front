@@ -118,8 +118,14 @@
     min-height: 300px;
     display: flex;
     flex-direction: column;
-    //align-items: center;
+    
     justify-content: flex-start;
+}
+
+.ant-menu-submenu {
+    &.ant-menu-submenu-popup {
+        position: fixed;
+    }
 }
 
 .ant-table.ant-table-bordered > .ant-table-container > .ant-table-content > table > thead > tr > th,
