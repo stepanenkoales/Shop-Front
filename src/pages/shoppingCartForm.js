@@ -134,7 +134,9 @@ export const ShoppingCartForm = () => {
         title: '',
         dataIndex: 'image',
         render: (text, record) => (
-          <AdvancedImage cldImg={cloudinaryService.getImage(record.image)} />
+          <AdvancedImage
+            cldImg={cloudinaryService.getProductCardImage(record.image)}
+          />
         ),
       },
       {

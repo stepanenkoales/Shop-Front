@@ -1,26 +1,25 @@
-/* import { useContext } from 'react'
+import { useContext } from 'react'
+import { Link } from 'react-router-dom'
 import { CartContext } from '../context/cartContextProvider'
 import { routes } from '../config/routes'
-import { Link } from 'react-router-dom'
 import { Button } from 'antd'
 import { ShoppingOutlined } from '@ant-design/icons'
 
 export const ShoppingCartButton = (props) => {
-  const { shoppingCart } = useContext(CartContext)
+  const { shoppingCart, addItemToShoppingCart } = useContext(CartContext)
 
   if (shoppingCart.find((product) => product.itemId === props.id)) {
-    console.log(1)
     return (
       <Button type="ghost">
         <Link to={routes.shoppingCart}>Added to Cart</Link>
       </Button>
     )
   }
-  console.log(2)
+
   return (
-    <Buttons
+    <Button
       onClick={() =>
-        props.addToShoppingCart({
+        addItemToShoppingCart({
           itemId: props.id,
           quantity: props.quantity ? props.quantity : 1,
         })
@@ -33,7 +32,6 @@ export const ShoppingCartButton = (props) => {
           fontSize: '1.4em',
         }}
       />
-    </Buttons>
-  ) 
+    </Button>
+  )
 }
- */

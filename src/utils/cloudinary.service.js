@@ -19,26 +19,18 @@ class CloudinaryService {
     return httpsService.post('/cloudinary/delete', { public_id })
   }
 
-  getProductCardImage(publicId, width) {
+  getProductCardImage(publicId, width, height) {
     const cld = new Cloudinary({
       cloud: {
         cloudName: config.cloudName,
       },
     })
     const myImage = cld.image(publicId)
-    myImage.resize(fit().width(width ? width : 150))
-
-    return myImage
-  }
-
-  getImage(publicId) {
-    const cld = new Cloudinary({
-      cloud: {
-        cloudName: config.cloudName,
-      },
-    })
-    const myImage = cld.image(publicId)
-    myImage.resize(fit().height(140))
+    myImage.resize(
+      fit()
+        .width(width ? width : 150)
+        .height(height ? height : 150)
+    )
 
     return myImage
   }

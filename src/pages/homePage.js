@@ -1,11 +1,10 @@
-import { useState, useEffect, useCallback, useContext } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useState, useEffect, useCallback } from 'react'
+import { Link, useSearchParams, Outlet, Routes, Route } from 'react-router-dom'
 import { Layout } from 'antd'
-import { AuthContext } from '../context/authContextProvider'
-import { CartContext } from '../context/cartContextProvider'
 import { routes } from '../config/routes'
 import { httpsService } from '../utils/https.service'
 import { HeaderHome } from '../components/headerHome'
+import { ProductCardDesktop } from '../components/productCardDesktop'
 import { ContentHomePage } from '../components/contentHomePage'
 import '../styles/homePage.scss'
 
@@ -14,15 +13,14 @@ const { Header, Content, Footer } = Layout
 export const HomePage = () => {
   const [items, setItems] = useState([])
   const [categories, setCategories] = useState([])
-  const [searchValue, setSearchValue] = useState(null) // change to useSearchParams
   const [totalItems, setTotalItems] = useState(0)
   const [searchParams, setSearchParams] = useSearchParams()
   const [currentPage, setCurrentPage] = useState(1)
   const [showProductCard, setShowProductCard] = useState(false)
-  const { user, logout } = useContext(AuthContext)
-  const { shoppingCart, setShoppingCart } = useContext(CartContext)
+  const [isInitiallyFetched, setIsInitiallyFetched] = useState(false)
 
   useEffect(() => {
+    console.log(123)
     httpsService
       .get('/categories/', {
         params: {
@@ -44,16 +42,22 @@ export const HomePage = () => {
       const filteredCategories = categories.filter(
         (category) => category.parentId === id
       )
+      console.log(categories)
+      console.log(filteredCategories)
       filteredCategories.forEach((category) => categoryIds.push(category.id))
+      console.log(categoryIds)
       return categoryIds
     },
     [categories]
   )
 
   useEffect(() => {
-    if (searchParams.get('subId')) {
+    console.log(searchParams.get('subId'))
+
+    if (searchParams.get('subId') && !isInitiallyFetched) {
+      console.log(20)
       return httpsService
-        .get('/items', {
+        .get('/items/', {
           params: {
             categoryId: searchParams.get('subId'),
           },
@@ -65,8 +69,11 @@ export const HomePage = () => {
         .catch((err) => console.log(err))
     }
 
-    if (searchParams.get('id')) {
+    if (searchParams.get('id') && !isInitiallyFetched) {
+      console.log(1)
       const categoryIds = getCategoryIds(searchParams.get('id'))
+      console.log(2)
+      console.log(categoryIds)
 
       if (categoryIds.length === 0) return
 
@@ -75,36 +82,21 @@ export const HomePage = () => {
           categoryId: categoryIds,
         })
         .then((res) => {
+          console.log(res)
           setItems(res.rows)
           setTotalItems(res.count)
         })
         .catch((err) => console.log(err))
     }
-  }, [getCategoryIds, searchParams])
 
-  const addToShoppingCart = useCallback(
-    (newShoppingCart) => {
-      const foundIndex = shoppingCart.findIndex(
-        (item) => item.itemId === newShoppingCart.itemId
-      )
-
-      if (foundIndex >= 0) {
-        shoppingCart[foundIndex].quantity = ++shoppingCart[foundIndex].quantity
-        setShoppingCart([...shoppingCart])
-        return
-      }
-
-      setShoppingCart([...shoppingCart, newShoppingCart])
-    },
-    [shoppingCart, setShoppingCart]
-  )
+    setIsInitiallyFetched(true)
+  }, [getCategoryIds, searchParams, isInitiallyFetched])
 
   const handleSubCategoriesChange = useCallback(
     async (e) => {
       setShowProductCard(false)
       setCurrentPage(1)
       setSearchParams({ id: e.key })
-      setSearchValue(null)
       const categoryIds = getCategoryIds(e.key)
 
       if (categoryIds.length === 0) {
@@ -116,7 +108,7 @@ export const HomePage = () => {
       const response = await httpsService.post('/items/id', {
         categoryId: categoryIds,
       })
-
+      console.log(123)
       const { rows, count } = response
 
       setItems(rows)
@@ -129,7 +121,6 @@ export const HomePage = () => {
     setShowProductCard(false)
     setCurrentPage(1)
     setSearchParams({ id: e.keyPath[1], subId: e.keyPath[0] })
-    setSearchValue(null)
 
     const response = await httpsService.get('/items/', {
       params: {
@@ -146,13 +137,11 @@ export const HomePage = () => {
     setCurrentPage(page)
     const categoryIds = getCategoryIds(searchParams.get('id'))
 
-    const response = await httpsService.get('/items/', {
-      params: {
-        categoryId: searchParams.get('subId') || categoryIds,
-        currentPage: page,
-        pageSize: pageSize,
-        name: searchValue,
-      },
+    const response = await httpsService.post('/items/id', {
+      categoryId: searchParams.get('subId') || categoryIds,
+      currentPage: page,
+      pageSize: pageSize,
+      name: searchParams.get('search'),
     })
     const { rows } = response
 
@@ -163,13 +152,11 @@ export const HomePage = () => {
 
   const onMobilePaginationChange = async () => {
     const categoryIds = getCategoryIds(searchParams.get('id'))
-    const response = await httpsService.get('/items/', {
-      params: {
-        categoryId: searchParams.get('subId') || categoryIds,
-        currentPage: currentPage + 1,
-        pageSize: 5,
-        name: searchValue,
-      },
+    const response = await httpsService.post('/items/id', {
+      categoryId: searchParams.get('subId') || categoryIds,
+      currentPage: currentPage + 1,
+      pageSize: 5,
+      name: searchParams.get('search'),
     })
     const { rows, count } = response
 
@@ -185,7 +172,9 @@ export const HomePage = () => {
       return null
     }
 
-    setSearchValue(trimmedValue)
+    searchParams.set('search', trimmedValue)
+    setSearchParams(searchParams)
+
     const categoryIds = searchParams.get('id')
       ? getCategoryIds(searchParams.get('id'))
       : null
@@ -217,14 +206,14 @@ export const HomePage = () => {
       <Header>
         <HeaderHome
           onSearch={onSearch}
-          shoppingCart={shoppingCart}
           categories={categories}
           handleItemsChange={handleItemsChange}
           handleSubCategoriesChange={handleSubCategoriesChange}
-          user={user}
-          logout={logout}
         />
       </Header>
+
+      <Outlet />
+
       <Content>
         <div className="content">
           <ContentHomePage
@@ -235,7 +224,6 @@ export const HomePage = () => {
             onPaginationChange={onPaginationChange}
             currentPage={currentPage}
             handleQuantityChange={handleQuantityChange}
-            addToShoppingCart={addToShoppingCart}
             onMobilePaginationChange={onMobilePaginationChange}
           />
         </div>

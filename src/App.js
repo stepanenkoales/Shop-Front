@@ -16,6 +16,8 @@ import { AdminGuard } from './hoc/adminGuard'
 import { UserGuard } from './hoc/userGuard'
 import { AuthContextProvider } from './context/authContextProvider'
 import { CartContextProvider } from './context/cartContextProvider'
+import { ProductCardDesktop } from './components/productCardDesktop'
+import { ContentHomePage } from './components/contentHomePage'
 import 'antd/dist/antd.css'
 
 export const App = () => {
@@ -29,6 +31,17 @@ export const App = () => {
               <HomePage />
             </CartContextProvider>
           </AuthContextProvider>
+        }
+      >
+        {/* <Route path="/:id" element={<ContentHomePage />} /> */}
+      </Route>
+
+      <Route
+        path="item/:id"
+        element={
+          <CartContextProvider>
+            <ProductCardDesktop />
+          </CartContextProvider>
         }
       />
       <Route

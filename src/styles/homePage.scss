@@ -9,7 +9,6 @@
         line-height: 30px !important;
         padding: 15px 0 0 0 !important;
     }
-
     &-footer {
         text-align: center;
         background: $baseColor !important;
@@ -23,15 +22,12 @@
     &-thead {
         display: none;
     }
-
     &-cell {
-        
         .ant-input-number {
             min-width: 45px;
             max-width: 90px;
         }
     }
-
     &-column-title {
         z-index: 0 !important;
     }
@@ -85,11 +81,9 @@
     .ant-space.desktop-visible {
         display: none;
     }
-
     .mobile-visible {
         display: inline-block;
         margin-top: 40px;
-
         &-space {
             width: 100% !important;
             padding: 0 20px 0 20px;
@@ -118,7 +112,6 @@
     min-height: 300px;
     display: flex;
     flex-direction: column;
-    
     justify-content: flex-start;
 }
 

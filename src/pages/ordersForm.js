@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { LogoutOutlined, HomeOutlined } from '@ant-design/icons'
 import { Layout, Menu, Row, Col, Divider, Select } from 'antd'
 import { Orders } from '../components/orders'
@@ -8,24 +8,41 @@ import { routes } from '../config/routes'
 import { httpsService } from '../utils/https.service'
 import '../styles/ordersForm.scss'
 
+const dayjs = require('dayjs')
+const duration = require('dayjs/plugin/duration')
+
 const { Content } = Layout
 const { Option } = Select
 
 export const OrdersForm = () => {
   const [orders, setOrders] = useState([])
-  const [isLoading, setIsLoading] = useState(false)
+  const [searchParams, setSearchParams] = useSearchParams()
   const { logout } = useContext(AuthContext)
+
+  const getDaysInMsc = (days) => {
+    dayjs.extend(duration)
+    return dayjs.duration(days, 'days').asMilliseconds()
+  }
 
   useEffect(() => {
     httpsService
-      .get('/order')
+      .get(
+        '/order',
+        searchParams.get('orderFilter') === 'all' ||
+          !searchParams.get('orderFilter')
+          ? null
+          : {
+              params: {
+                time: getDaysInMsc(searchParams.get('orderFilter')),
+              },
+            }
+      )
       .then((res) => {
         setOrders(res)
       })
       .catch((err) => {
         console.log(err)
       })
-      .finally(() => setIsLoading(true))
   }, [])
 
   const ordersQuantity = () => {
@@ -46,24 +63,23 @@ export const OrdersForm = () => {
   }
 
   const handleOrderSelect = (days) => {
-    if (!days) {
-      return httpsService
-        .get('/order')
-        .then((res) => {
-          setOrders(res)
-        })
-        .catch((err) => console.log(err))
-    }
+    searchParams.set('orderFilter', days)
+    setSearchParams(searchParams)
 
     httpsService
-      .get('/order', { params: { time: days * 24 * 60 * 60 * 1000 } })
+      .get(
+        '/order',
+        days === 'all'
+          ? null
+          : {
+              params: { time: getDaysInMsc(days) },
+            }
+      )
       .then((res) => {
         setOrders(res)
       })
       .catch((err) => console.log(err))
   }
-
-  if (!isLoading) return null
 
   return (
     <div>
@@ -91,8 +107,15 @@ export const OrdersForm = () => {
 
               <Divider orientation="left">
                 {`${ordersQuantity()} placed in `}
-                <Select defaultValue="" onSelect={handleOrderSelect}>
-                  <Option value="">at all time</Option>
+                <Select
+                  defaultValue={
+                    searchParams.get('orderFilter')
+                      ? searchParams.get('orderFilter')
+                      : 'all'
+                  }
+                  onSelect={handleOrderSelect}
+                >
+                  <Option value="all">at all time</Option>
                   <Option value="30">last 30 days</Option>
                   <Option value="90">past 3 months</Option>
                   <Option value="180">past 6 months</Option>
