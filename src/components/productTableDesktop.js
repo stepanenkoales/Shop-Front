@@ -3,7 +3,7 @@ import { cloudinaryService } from '../utils/cloudinary.service'
 import { AdvancedImage } from '@cloudinary/react'
 import { Table, InputNumber } from 'antd'
 import { ShoppingCartButton } from './shoppingCartButton'
-import { Link, Outlet, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import '../styles/homePage.scss'
 
 export const ProductTableDesktop = (props) => {
@@ -32,7 +32,7 @@ export const ProductTableDesktop = (props) => {
               cursor: 'pointer',
               color: '#1890ff',
             }}
-            to={`/item/${record.id}`}
+            to={`/product/${record.id}`}
           >
             {record.name}
           </Link>

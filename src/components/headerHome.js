@@ -11,6 +11,7 @@ import {
 import { routes } from '../config/routes'
 import { AuthContext } from '../context/authContextProvider'
 import { CartContext } from '../context/cartContextProvider'
+import { SearchContext } from '../context/searchContextProvider'
 import '../styles/homePage.scss'
 
 const { Search } = Input
@@ -20,6 +21,7 @@ const { SubMenu } = Menu
 export const HeaderHome = (props) => {
   const { user, logout } = useContext(AuthContext)
   const { shoppingCart } = useContext(CartContext)
+  const { onSearch } = useContext(SearchContext)
 
   const history = useNavigate()
 
@@ -44,7 +46,7 @@ export const HeaderHome = (props) => {
             className="desktop-visible"
             placeholder="input search text"
             allowClear
-            onSearch={props.onSearch}
+            onSearch={onSearch}
           />
         </Space>
 
@@ -104,7 +106,7 @@ export const HeaderHome = (props) => {
             justifyContent: 'center',
             alignItems: 'center',
           }}
-          //onClick={props.handleItemsChange}
+          onClick={() => onSearch('')}
           theme="dark"
           mode="horizontal"
         >
@@ -112,7 +114,10 @@ export const HeaderHome = (props) => {
             <SubMenu
               key={parentCategory.id}
               title={parentCategory.category}
-              onTitleClick={(e) => history('/' + e.key)} //props.handleSubCategoriesChange
+              onTitleClick={(e) => {
+                history('/' + e.key)
+                onSearch('')
+              }}
             >
               {props.categories
                 .filter((category) => category.parentId === parentCategory.id)

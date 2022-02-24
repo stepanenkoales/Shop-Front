@@ -10,7 +10,6 @@ import {
   PlusOutlined,
   UploadOutlined,
 } from '@ant-design/icons'
-
 import '../styles/adminForm.scss'
 
 const { Option } = Select
@@ -154,8 +153,6 @@ export const AddItemForm = () => {
                     >
                       <Upload
                         customRequest={handleImageUpload}
-                        //onChange={handleOnChange}
-
                         onRemove={handleImageRemove}
                         listType="picture"
                         {...props}

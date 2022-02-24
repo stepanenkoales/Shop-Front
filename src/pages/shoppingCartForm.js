@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useContext, useMemo } from 'react'
-import { Link, useNavigate, Navigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import { routes } from '../config/routes'
 import { httpsService } from '../utils/https.service'
 import { AuthContext } from '../context/authContextProvider'
@@ -21,8 +21,7 @@ export const ShoppingCartForm = () => {
   const { shoppingCart, setShoppingCart } = useContext(CartContext)
 
   useEffect(() => {
-    let itemsId = []
-    shoppingCart.forEach((item) => itemsId.push(item.itemId))
+    const itemsId = Array.from(shoppingCart, (item) => item.itemId)
 
     if (itemsId.length === 0) return
 
@@ -207,10 +206,13 @@ export const ShoppingCartForm = () => {
           <Divider />
           <Row>
             <Col span={5}>
-              <Button type="link">
-                <Link to={routes.homePage}>
-                  <ArrowLeftOutlined /> Continue shopping
-                </Link>
+              <Button
+                onClick={() => {
+                  navigate(-1)
+                }}
+                type="link"
+              >
+                <ArrowLeftOutlined /> Continue Shopping
               </Button>
             </Col>
             <Col span={5} offset={12}>
@@ -229,10 +231,13 @@ export const ShoppingCartForm = () => {
         <>
           <h2>Your Cart is empty</h2>
           <Divider />
-          <Button type="link">
-            <Link to={routes.homePage}>
-              <ArrowLeftOutlined /> Continue shopping
-            </Link>
+          <Button
+            type="link"
+            onClick={() => {
+              navigate(-1)
+            }}
+          >
+            <ArrowLeftOutlined /> Continue Shopping
           </Button>
         </>
       )}

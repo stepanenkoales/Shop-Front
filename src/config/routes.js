@@ -4,7 +4,7 @@ export const routes = {
   register: '/register',
   reset: '/reset',
   admin: '/admin',
-  shoppingCart: 'shopping-cart',
+  shoppingCart: '/shopping-cart',
   addCategory: '/admin/add-category',
   addItem: '/admin/add-item',
   updateItem: '/admin/update-item',

@@ -12,12 +12,13 @@ import { DeleteItemForm } from './pages/deleteItemForm'
 import { ShoppingCartForm } from './pages/shoppingCartForm'
 import { Routes, Route } from 'react-router-dom'
 import { routes } from './config/routes'
-import { AdminGuard } from './hoc/adminGuard'
 import { UserGuard } from './hoc/userGuard'
 import { AuthContextProvider } from './context/authContextProvider'
 import { CartContextProvider } from './context/cartContextProvider'
+import { SearchContextProvider } from './context/searchContextProvider'
 import { ProductCardDesktop } from './components/productCardDesktop'
 import { ContentHomePage } from './components/contentHomePage'
+import { LandingHomepage } from './components/landingHomePage'
 import 'antd/dist/antd.css'
 
 export const App = () => {
@@ -28,22 +29,19 @@ export const App = () => {
         element={
           <AuthContextProvider>
             <CartContextProvider>
-              <HomePage />
+              <SearchContextProvider>
+                <HomePage />
+              </SearchContextProvider>
             </CartContextProvider>
           </AuthContextProvider>
         }
       >
-        {/* <Route path="/:id" element={<ContentHomePage />} /> */}
+        <Route index element={<LandingHomepage />} />
+        <Route path="/:id" element={<ContentHomePage />} />
+        <Route path="/:id/:subId" element={<ContentHomePage />} />
+        <Route path="product/:id" element={<ProductCardDesktop />} />
       </Route>
 
-      <Route
-        path="item/:id"
-        element={
-          <CartContextProvider>
-            <ProductCardDesktop />
-          </CartContextProvider>
-        }
-      />
       <Route
         path={routes.shoppingCart}
         element={
@@ -73,9 +71,9 @@ export const App = () => {
         path={routes.admin}
         element={
           <AuthContextProvider>
-            <AdminGuard>
+            <UserGuard admin>
               <AdminForm />
-            </AdminGuard>
+            </UserGuard>
           </AuthContextProvider>
         }
       />
@@ -83,9 +81,9 @@ export const App = () => {
         path={routes.addCategory}
         element={
           <AuthContextProvider>
-            <AdminGuard>
+            <UserGuard admin>
               <AddCategoryForm />
-            </AdminGuard>
+            </UserGuard>
           </AuthContextProvider>
         }
       />
@@ -93,9 +91,9 @@ export const App = () => {
         path={routes.addItem}
         element={
           <AuthContextProvider>
-            <AdminGuard>
+            <UserGuard admin>
               <AddItemForm />
-            </AdminGuard>
+            </UserGuard>
           </AuthContextProvider>
         }
       />
@@ -103,9 +101,9 @@ export const App = () => {
         path={routes.updateItem}
         element={
           <AuthContextProvider>
-            <AdminGuard>
+            <UserGuard admin>
               <UpdateItemForm />
-            </AdminGuard>
+            </UserGuard>
           </AuthContextProvider>
         }
       />
@@ -113,9 +111,9 @@ export const App = () => {
         path={routes.deleteItem}
         element={
           <AuthContextProvider>
-            <AdminGuard>
+            <UserGuard admin>
               <DeleteItemForm />
-            </AdminGuard>
+            </UserGuard>
           </AuthContextProvider>
         }
       />
