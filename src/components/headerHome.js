@@ -33,13 +33,15 @@ export const HeaderHome = (props) => {
   return (
     <>
       <div className="menu">
-        <ShoppingCartOutlined
-          style={{
-            color: '#ffffff',
-            fontSize: '2.2em',
-            paddingLeft: '15px',
-          }}
-        />
+        <Link to={routes.homePage}>
+          <ShoppingCartOutlined
+            style={{
+              color: '#ffffff',
+              fontSize: '2.2em',
+              paddingLeft: '15px',
+            }}
+          />
+        </Link>
 
         <Space className="desktop-visible" direction="vertical">
           <Search
