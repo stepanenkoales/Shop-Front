@@ -1,49 +1,13 @@
-import { useMemo, useContext, useCallback } from 'react'
-import { Link } from 'react-router-dom'
+import { useMemo } from 'react'
 import { cloudinaryService } from '../utils/cloudinary.service'
 import { AdvancedImage } from '@cloudinary/react'
-import { Table, Button, InputNumber } from 'antd'
-import { ShoppingOutlined } from '@ant-design/icons'
-import { CartContext } from '../context/cartContextProvider'
-import { routes } from '../config/routes'
+import { Table, InputNumber } from 'antd'
+import { ShoppingCartButton } from './shoppingCartButton'
+import { Link } from 'react-router-dom'
 import '../styles/homePage.scss'
 
 export const ProductTableDesktop = (props) => {
-  const { shoppingCart } = useContext(CartContext)
-
   const onTableKeyChange = (items) => items.id
-
-  const shoppingCartButton = useCallback(
-    (record) => {
-      if (shoppingCart.find((product) => product.itemId === record.id)) {
-        return (
-          <Button type="ghost">
-            <Link to={routes.shoppingCart}>Added to Cart</Link>
-          </Button>
-        )
-      }
-
-      return (
-        <Button
-          onClick={() =>
-            props.addToShoppingCart({
-              itemId: record.id,
-              quantity: record.quantity ? record.quantity : 1,
-            })
-          }
-          type="link"
-        >
-          <ShoppingOutlined
-            style={{
-              color: '#0f0f0f',
-              fontSize: '1.4em',
-            }}
-          />
-        </Button>
-      )
-    },
-    [props, shoppingCart]
-  )
 
   const columns = useMemo(
     () => [
@@ -51,7 +15,9 @@ export const ProductTableDesktop = (props) => {
         title: '',
         dataIndex: 'image',
         render: (text, record) => (
-          <AdvancedImage cldImg={cloudinaryService.getImage(record.image)} />
+          <AdvancedImage
+            cldImg={cloudinaryService.getProductCardImage(record.image, 200)}
+          />
         ),
       },
       {
@@ -59,20 +25,17 @@ export const ProductTableDesktop = (props) => {
         dataIndex: 'name',
         sorter: (a, b) => a.name.localeCompare(b.name),
         render: (text, record) => (
-          <div
-            onClick={() => {
-              props.setShowProductCard(true)
-              props.setProduct(record)
-            }}
+          <Link
             style={{
               border: 'none',
               background: 'white',
               cursor: 'pointer',
               color: '#1890ff',
             }}
+            to={`/product/${record.id}`}
           >
             {record.name}
-          </div>
+          </Link>
         ),
       },
       {
@@ -103,10 +66,12 @@ export const ProductTableDesktop = (props) => {
       {
         title: '',
         dataIndex: '',
-        render: (text, record) => shoppingCartButton(record),
+        render: (text, record) => (
+          <ShoppingCartButton id={record.id} quantity={record.quantity} />
+        ),
       },
     ],
-    [props, shoppingCartButton]
+    [props]
   )
 
   return (

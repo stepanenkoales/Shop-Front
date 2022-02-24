@@ -1,38 +1,33 @@
-import { Card, Button, Statistic, Row, Col, Divider } from 'antd'
-import { useContext } from 'react'
-import { Link } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link, useParams, useNavigate } from 'react-router-dom'
+import { Card, Statistic, Row, Col, Divider, Button } from 'antd'
 import { AdvancedImage } from '@cloudinary/react'
 import { cloudinaryService } from '../utils/cloudinary.service'
-import { ArrowLeftOutlined } from '@ant-design/icons'
-import { CartContext } from '../context/cartContextProvider'
+import { HomeOutlined } from '@ant-design/icons'
+import { ShoppingCartButton } from './shoppingCartButton'
 import { routes } from '../config/routes'
+import { httpsService } from '../utils/https.service'
 
-export const ProductCardDesktop = (props) => {
-  const { shoppingCart } = useContext(CartContext)
+export const ProductCardDesktop = () => {
+  const { id } = useParams()
+  const navigate = useNavigate()
+  const [item, setItem] = useState([])
 
-  const shoppingCartButton = () => {
-    if (shoppingCart.find((product) => product.itemId === props.product.id)) {
-      return (
-        <Button type="ghost">
-          <Link to={routes.shoppingCart}>Added to Cart</Link>
-        </Button>
-      )
-    }
-
-    return (
-      <Button
-        onClick={() =>
-          props.addToShoppingCart({
-            itemId: props.product.id,
-            quantity: 1,
-          })
-        }
-        type="ghost"
-      >
-        Add to Cart
-      </Button>
-    )
+  const navigateBack = () => {
+    navigate(-1)
   }
+
+  useEffect(() => {
+    httpsService
+      .post('/items/id', {
+        itemsId: id,
+      })
+      .then((res) => {
+        console.log(res)
+        setItem(res.rows[0])
+      })
+      .catch((err) => console.log(err.response))
+  }, [])
 
   return (
     <div
@@ -44,39 +39,44 @@ export const ProductCardDesktop = (props) => {
     >
       <Card
         style={{
-          marginTop: '40px',
+          marginTop: '130px',
           width: '60%',
           fontSize: '16px',
         }}
-        title={props.product.name}
+        title={item.name}
         bordered={false}
         hoverable
         actions={[
-          <Button onClick={() => props.setShowProductCard(false)} type="link">
-            <ArrowLeftOutlined />
+          <Button type="ghost" onClick={navigateBack}>
             back to Products
           </Button>,
-          shoppingCartButton(),
+          <Link to={routes.homePage}>
+            <HomeOutlined
+              style={{
+                marginTop: '5px',
+                color: '#0f0f0f',
+                fontSize: '1.4em',
+              }}
+            />
+          </Link>,
+          <ShoppingCartButton id={item.id} />,
         ]}
       >
         <Row>
           <Col flex={3}>
             <AdvancedImage
-              cldImg={cloudinaryService.getProductCardImage(
-                props.product.image,
-                200
-              )}
+              cldImg={cloudinaryService.getProductCardImage(item.image, 200)}
             />
           </Col>
           <Col offset={2} flex={2}>
             <Statistic
               style={{ paddingTop: '10px', fontSize: '16px' }}
-              value={props.product.price}
+              value={item.price}
               prefix={'$'}
               precision={2}
             />
             <Divider />
-            <p>{props.product.description}</p>
+            <p>{item.description}</p>
           </Col>
         </Row>
       </Card>

@@ -1,39 +1,10 @@
 import InfiniteScroll from 'react-infinite-scroll-component'
-import { Card, Button, Statistic } from 'antd'
+import { Card, Statistic } from 'antd'
 import { AdvancedImage } from '@cloudinary/react'
 import { cloudinaryService } from '../utils/cloudinary.service'
-import { useContext } from 'react'
-import { Link } from 'react-router-dom'
-import { CartContext } from '../context/cartContextProvider'
-import { routes } from '../config/routes'
+import { ShoppingCartButton } from './shoppingCartButton'
 
 export const ProductCardMobile = (props) => {
-  const { shoppingCart } = useContext(CartContext)
-
-  const shoppingCartButton = (id) => {
-    if (shoppingCart.find((product) => product.itemId === id)) {
-      return (
-        <Button type="ghost">
-          <Link to={routes.shoppingCart}>Added to Cart</Link>
-        </Button>
-      )
-    }
-
-    return (
-      <Button
-        onClick={() =>
-          props.addToShoppingCart({
-            itemId: id,
-            quantity: 1,
-          })
-        }
-        type="ghost"
-      >
-        Add to Cart
-      </Button>
-    )
-  }
-
   return (
     <>
       <div style={{ overflow: 'auto' }}>
@@ -49,7 +20,7 @@ export const ProductCardMobile = (props) => {
                 marginTop: '20px',
               }}
               hoverable
-              actions={[shoppingCartButton(item.id)]}
+              actions={[<ShoppingCartButton id={item.id} />]}
             >
               <AdvancedImage
                 cldImg={cloudinaryService.getProductCardImage(item.image)}
