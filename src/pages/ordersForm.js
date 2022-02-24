@@ -57,7 +57,7 @@ export const OrdersForm = () => {
     httpsService
       .delete('/order', { id })
       .then((res) => {
-        handleOrderSelect()
+        handleOrderSelect('all')
       })
       .catch((err) => console.log(err))
   }
