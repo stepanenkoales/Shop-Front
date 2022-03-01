@@ -6,10 +6,12 @@ The site is published at https://stepanenkoales.github.io/shop_front/
 
 # Technologies: 
 
-Project (front-end) is created with: \
+Project (front-end) is created with: 
+
 React \
 React Context \
 React Hooks \
 React-Router v6 \
 SASS \
-Ant design v4.17
+Ant design v4.17 \
+Cloudinary
